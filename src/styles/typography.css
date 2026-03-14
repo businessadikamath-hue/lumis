@@ -1,0 +1,37 @@
+.t-display {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(32px, 8vw, 52px);
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+}
+
+.t-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.t-heading {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.t-body {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.t-caption {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.t-mono {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  font-weight: 500;
+}

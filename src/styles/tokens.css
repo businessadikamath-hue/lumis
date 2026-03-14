@@ -1,0 +1,65 @@
+/* src/styles/tokens.css — import this first in main.tsx */
+
+:root {
+  /* ── Backgrounds ──────────────────────────────── */
+  --bg-base:          #0d0f1a;
+  --bg-elevated:      #13152a;
+  --bg-ambient-1:     rgba(124, 107, 255, 0.12);  /* violet glow */
+  --bg-ambient-2:     rgba(94, 196, 255, 0.07);   /* sky glow */
+  --bg-ambient-3:     rgba(79, 209, 160, 0.06);   /* mint glow */
+
+  /* ── Glass System ─────────────────────────────── */
+  --glass-bg:         rgba(255, 255, 255, 0.06);
+  --glass-bg-hover:   rgba(255, 255, 255, 0.09);
+  --glass-bg-active:  rgba(255, 255, 255, 0.12);
+  --glass-border:     rgba(255, 255, 255, 0.10);
+  --glass-border-hi:  rgba(255, 255, 255, 0.20);  /* top highlight edge */
+  --glass-blur:       20px;
+  --glass-blur-heavy: 40px;
+  --glass-shadow:     0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
+  --glass-shadow-sm:  0 4px 16px rgba(0, 0, 0, 0.3);
+
+  /* ── Accent Colors ────────────────────────────── */
+  --accent-violet:    #7c6bff;
+  --accent-violet-20: rgba(124, 107, 255, 0.20);
+  --accent-sky:       #5ec4ff;
+  --accent-sky-20:    rgba(94, 196, 255, 0.20);
+  --accent-mint:      #4fd1a0;
+  --accent-mint-20:   rgba(79, 209, 160, 0.20);
+  --accent-coral:     #ff8c69;
+  --accent-coral-20:  rgba(255, 140, 105, 0.20);
+  --accent-amber:     #ffcf70;
+  --accent-amber-20:  rgba(255, 207, 112, 0.20);
+
+  /* ── Mood Score Colors (used in charts + sliders) */
+  --mood-1:  #ff4757;  /* 1–2: deep red */
+  --mood-3:  #ff8c69;  /* 3–4: coral */
+  --mood-5:  #ffcf70;  /* 5–6: amber */
+  --mood-7:  #4fd1a0;  /* 7–8: mint */
+  --mood-9:  #5ec4ff;  /* 9–10: sky */
+
+  /* ── Typography ───────────────────────────────── */
+  --text-primary:   rgba(255, 255, 255, 0.95);
+  --text-secondary: rgba(255, 255, 255, 0.60);
+  --text-tertiary:  rgba(255, 255, 255, 0.35);
+
+  /* ── Spacing ──────────────────────────────────── */
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  40px;
+  --space-2xl: 64px;
+
+  /* ── Border Radius ────────────────────────────── */
+  --radius-sm:   8px;
+  --radius-md:   14px;
+  --radius-lg:   20px;
+  --radius-xl:   28px;
+  --radius-pill: 100px;
+
+  /* ── Transitions ──────────────────────────────── */
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);   /* bouncy spring */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);     /* smooth decel */
+  --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1); /* symmetric */
+}
