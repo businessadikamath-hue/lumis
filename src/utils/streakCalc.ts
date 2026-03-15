@@ -1,4 +1,4 @@
-import { JournalEntry } from '../types/entry';
+import type { JournalEntry } from '../types/entry';
 
 export const calculateStreak = (entries: JournalEntry[]): number => {
   if (entries.length === 0) return 0;

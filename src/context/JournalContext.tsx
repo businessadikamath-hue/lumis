@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db } from '../db/db';
-import { JournalEntry } from '../types/entry';
+import type { JournalEntry } from '../types/entry';
 import { useAuth } from './AuthContext';
 import { supabase } from '../lib/supabase';
 
@@ -56,13 +56,13 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
         updated_at: entry.updatedAt
       });
       if (!error) {
-        await db.entries.update(entry.id, { synced: 1 });
+        await db.entries.update(entry.id, { synced: 1 as const });
       }
     }
   };
 
   const updateEntry = async (id: string, updates: Partial<JournalEntry>) => {
-    const updated = { ...updates, updatedAt: Date.now(), synced: 0 };
+    const updated = { ...updates, updatedAt: Date.now(), synced: 0 as const };
     await db.entries.update(id, updated);
     await fetchEntries();
 
@@ -74,7 +74,7 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
         updated_at: updated.updatedAt
       });
       if (!error) {
-        await db.entries.update(id, { synced: 1 });
+        await db.entries.update(id, { synced: 1 as const });
       }
     }
   };
@@ -86,7 +86,7 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (user) {
       const { error } = await supabase.from('entries').update({ deleted: 1 }).eq('id', id);
       if (!error) {
-        await db.entries.update(id, { synced: 1 });
+        await db.entries.update(id, { synced: 1 as const });
       }
     }
   };
@@ -100,7 +100,7 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
         user_id: user.id
       });
       if (!error) {
-        await db.entries.update(entry.id, { synced: 1 });
+        await db.entries.update(entry.id, { synced: 1 as const });
       }
     }
     await fetchEntries();

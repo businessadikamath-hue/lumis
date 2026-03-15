@@ -28,6 +28,7 @@ export default function CheckInScreen() {
 
   const handleSubmit = async () => {
     await addEntry({
+      id: crypto.randomUUID(),
       date: new Date().toISOString().split('T')[0],
       mood,
       energy,

@@ -1,7 +1,6 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { db } from '../db/db';
-import { JournalEntry } from '../types/entry';
 
 export const exportMonthToPDF = async (year: number, month: number) => {
   const startDate = `${year}-${String(month).padStart(2, '0')}-01`;

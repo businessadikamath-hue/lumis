@@ -1,5 +1,6 @@
 // src/db/db.ts
-import Dexie, { Table } from 'dexie'
+import Dexie from 'dexie';
+import type { Table } from 'dexie';
 import type { JournalEntry } from '../types/entry'
 
 export class LumisDB extends Dexie {
@@ -23,7 +24,7 @@ export interface StoredReflection {
   periodStart: string
   periodEnd: string
   generatedAt: number
-  reflection: AIReflection
+  reflection: any
 }
 
 export const db = new LumisDB()

@@ -7,7 +7,7 @@ export const checkIfReflectionDue = async () => {
   const now = Date.now();
   const oneWeek = 7 * 24 * 60 * 60 * 1000;
 
-  if (!lastReflection || (now - lastReflection.createdAt > oneWeek)) {
+  if (!lastReflection || (now - lastReflection.generatedAt > (oneWeek as number))) {
     return true;
   }
   return false;
@@ -25,7 +25,7 @@ export const generateReflection = async (type: 'weekly' | 'monthly') => {
 
   if (error) throw error;
 
-  const reflection = {
+  const reflection: any = {
     id: crypto.randomUUID(),
     type,
     content: data.content,

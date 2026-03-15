@@ -1,5 +1,5 @@
 // src/animations/variants.ts
-import { Variants } from 'framer-motion'
+import type { Variants } from 'framer-motion'
 
 /* Page slide-up entrance (every screen uses this) */
 export const pageVariants: Variants = {

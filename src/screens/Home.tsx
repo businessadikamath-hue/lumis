@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useJournal } from '../context/JournalContext';
-import { useAuth } from '../context/AuthContext';
+
 import { useTheme } from '../context/ThemeContext';
 import { pageVariants, staggerContainer, cardEntrance } from '../animations/variants';
 import { getMoodColor } from '../utils/moodColor';

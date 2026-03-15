@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { pageVariants } from '../animations/variants';
-import { ChevronLeft, LogOut, Bell, Cloud, Trash2, Github } from 'lucide-react';
+import { ChevronLeft, LogOut, Bell, Cloud, Trash2 } from 'lucide-react';
 import { TabBar } from '../components/TabBar';
 
 export default function SettingsScreen() {

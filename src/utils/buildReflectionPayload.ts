@@ -1,4 +1,4 @@
-import { JournalEntry } from '../types/entry';
+import type { JournalEntry } from '../types/entry';
 
 export const buildReflectionPayload = (entries: JournalEntry[], type: 'weekly' | 'monthly') => {
   const count = entries.length;

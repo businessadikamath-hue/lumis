@@ -1,7 +1,8 @@
 // src/db/sync.ts
 import { db } from './db'
+import type { StoredReflection } from './db'
 import { supabase } from '../lib/supabase'
-import type { JournalEntry, StoredReflection } from '../types/entry'
+import type { JournalEntry } from '../types/entry'
 
 // ── Field name mappers ────────────────────────────────────────────────────
 // Supabase stores columns in snake_case. TypeScript types use camelCase.

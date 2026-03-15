@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useJournal } from '../context/JournalContext';
-import { pageVariants, staggerContainer, cardEntrance } from '../animations/variants';
+import { pageVariants } from '../animations/variants';
 import { ChevronLeft } from 'lucide-react';
 import { getMoodColor } from '../utils/moodColor';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
