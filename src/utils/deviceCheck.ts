@@ -4,6 +4,10 @@ import { db } from '../db/db';
 export type AppRoute = '/welcome' | '/onboarding' | '/home' | '/checkin';
 
 export const checkDeviceAndAuth = async (): Promise<AppRoute> => {
+  // If there's a pending verification, don't interrupt it
+  const pendingEmail = localStorage.getItem('lumis_pending_email');
+  if (pendingEmail) return '/welcome';
+
   // Step 1: Check for existing device ID
   let deviceId = localStorage.getItem('lumis_device_id');
 
