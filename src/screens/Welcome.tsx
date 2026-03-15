@@ -57,22 +57,6 @@ export default function WelcomeScreen() {
       }
     });
 
-    const handleSignUp = async () => {
-    if (password !== confirmPassword) {
-      setError("Passwords don't match");
-      return;
-    }
-    setLoading(true);
-    setError(null);
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { first_name: firstName, device_id: localStorage.getItem('lumis_device_id') }
-      }
-    });
-
     if (error) {
       setError(error.message);
       setLoading(false);
@@ -80,10 +64,6 @@ export default function WelcomeScreen() {
     }
 
     localStorage.setItem('lumis_pending_email', email);
-    localStorage.setItem('lumis_verify_reason', 'new_signup');
-    localStorage.setItem('lumis_name', firstName);
-    navigate('/verify');
-  };
     localStorage.setItem('lumis_verify_reason', 'new_signup');
     localStorage.setItem('lumis_name', firstName);
     navigate('/verify');
