@@ -1,0 +1,18 @@
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+```
+
+This tells Vercel to always serve `index.html` for any route, and let React Router handle the navigation.
+
+Then run the 3 git commands:
+```
+git add .
+```
+```
+git commit -m "fix vercel routing"
+```
+```
+git push
