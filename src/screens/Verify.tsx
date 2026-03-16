@@ -49,10 +49,11 @@ export default function VerifyScreen() {
     setLoading(true);
     setError(null);
 
+    const reason = localStorage.getItem('lumis_verify_reason');
     const { error } = await supabase.auth.verifyOtp({
       email: email!,
       token: code,
-      type: 'email'
+      type: reason === 'new_signup' ? 'signup' : 'email'
     });
 
     if (error) {
@@ -63,8 +64,30 @@ export default function VerifyScreen() {
     }
 
     localStorage.setItem('lumis_device_trusted', 'true');
-    const reason = localStorage.getItem('lumis_verify_reason');
     navigate(reason === 'new_signup' ? '/onboarding' : '/home', { replace: true });
+  };
+
+  const handleResend = async () => {
+    if (!email) return;
+    setLoading(true);
+    setCountdown(60);
+    setError(null);
+    
+    try {
+      const reason = localStorage.getItem('lumis_verify_reason');
+      if (reason === 'new_signup') {
+        // For signup, we just notify them to try after some time or check spam
+        // Re-sending a signup OTP usually requires re-calling signUp or using a dedicated resend endpoint if available
+        setError("Please check your spam folder. If you don't see it, try signing up again in a few minutes.");
+      } else {
+        const { sendDeviceVerificationCode } = await import('../utils/auth');
+        await sendDeviceVerificationCode(email);
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to resend code.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -93,8 +116,8 @@ export default function VerifyScreen() {
             onKeyDown={e => handleKeyDown(i, e)}
             disabled={loading}
             style={{ 
-              width: '48px', height: '60px', borderRadius: '12px', background: 'var(--glass-bg)', 
-              border: '1px solid var(--glass-border)', color: 'var(--accent-violet)', 
+              width: '48px', height: '60px', borderRadius: '12px', background: 'var(--glass-bg-active)', 
+              border: '2px solid var(--glass-border-hi)', color: 'white', 
               fontSize: '28px', fontWeight: '700', textAlign: 'center', outline: 'none'
             }}
           />
@@ -108,7 +131,8 @@ export default function VerifyScreen() {
       )}
 
       <button 
-        disabled={countdown > 0}
+        onClick={handleResend}
+        disabled={countdown > 0 || loading}
         style={{ background: 'transparent', border: 'none', color: countdown > 0 ? 'var(--text-tertiary)' : 'var(--accent-violet)', cursor: 'pointer', fontWeight: 600 }}
       >
         {countdown > 0 ? `Resend code in ${countdown}s` : 'Resend code'}

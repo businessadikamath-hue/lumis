@@ -38,5 +38,10 @@ export default defineConfig({
         ]
       }
     })
-  ]
+  ],
+  resolve: {
+    alias: {
+      'react-is': 'react-is'
+    }
+  }
 })

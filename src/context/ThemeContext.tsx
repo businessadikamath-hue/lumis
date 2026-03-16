@@ -12,6 +12,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const setMoodColor = (color: string) => {
     setMoodColorState(color);
+    localStorage.setItem('lumis_last_mood_color', color);
     document.documentElement.style.setProperty('--bg-ambient-1', color + '22');
   };
 

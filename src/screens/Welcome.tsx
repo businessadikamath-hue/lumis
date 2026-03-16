@@ -17,6 +17,12 @@ export default function WelcomeScreen() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  useState(() => {
+    if (!localStorage.getItem('lumis_device_id')) {
+      localStorage.setItem('lumis_device_id', Math.random().toString(36).substring(2, 15));
+    }
+  });
+
   const handleLogin = async () => {
     setLoading(true);
     setError(null);
