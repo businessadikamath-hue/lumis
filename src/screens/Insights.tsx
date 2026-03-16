@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useJournal } from '../context/JournalContext';
 import { ChevronLeft, Sparkles, Loader2 } from 'lucide-react';
 import { getMoodColor } from '../utils/moodColor';
@@ -85,6 +85,10 @@ export default function InsightsScreen() {
                   <Loader2 className="spin" size={24} color="var(--accent-violet)" />
                   <p className="t-caption" style={{ marginTop: '12px' }}>Generating {aiReportType} report...</p>
                 </div>
+              )}
+
+              {aiError && (
+                <p className="t-caption" style={{ color: '#ff4757', marginTop: '12px' }}>{aiError}</p>
               )}
 
               {aiResult && (

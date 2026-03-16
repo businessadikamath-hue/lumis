@@ -3,7 +3,7 @@ import { useJournal } from '../context/JournalContext';
 import { useAuth } from '../context/AuthContext';
 import { TabBar } from '../components/TabBar';
 import { Calendar } from '../components/Calendar';
-import { Sparkles, History, Layout } from 'lucide-react';
+import { Sparkles, History } from 'lucide-react';
 
 export default function HomeScreen() {
   const { entries } = useJournal();
@@ -31,30 +31,28 @@ export default function HomeScreen() {
           </div>
         </header>
 
-        {/* Welcome Graphic Card */}
+        {/* Actionable Check-In Card */}
         <div 
+          onClick={() => navigate('/checkin')}
           className="glass-card" 
           style={{ 
-            padding: '0', 
+            padding: '24px', 
             borderRadius: '24px', 
-            overflow: 'hidden', 
             marginBottom: '32px', 
-            position: 'relative', 
-            height: '200px',
-            border: '1px solid var(--glass-border-hi)'
+            background: 'linear-gradient(135deg, var(--accent-violet) 0%, #a29fff 100%)',
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 12px 24px var(--accent-violet-20)'
           }}
         >
-          <img 
-            src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" 
-            alt="Welcome" 
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(18,20,40,0.9), transparent)', padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-              <div style={{ padding: '4px 8px', borderRadius: '8px', background: 'var(--accent-violet)', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase' }}>Daily Flow</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ flex: 1 }}>
+              <h2 className="t-heading" style={{ color: 'white', fontSize: '20px', marginBottom: '8px' }}>Log Daily Check-In</h2>
+              <p className="t-caption" style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.4' }}>Track your mood, stress, and energy in 30 seconds.</p>
             </div>
-            <h2 className="t-heading" style={{ color: 'white', fontSize: '20px', marginBottom: '4px' }}>Ready to reflect?</h2>
-            <p className="t-caption" style={{ color: 'rgba(255,255,255,0.6)', lineHeight: '1.4' }}>Taking a moment for yourself is the first step to clarity.</p>
+            <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Sparkles size={24} color="white" />
+            </div>
           </div>
         </div>
 

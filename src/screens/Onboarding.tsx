@@ -31,7 +31,7 @@ export default function OnboardingScreen() {
     } else {
       localStorage.setItem('lumis_onboarded', 'true');
       if (name) localStorage.setItem('lumis_name', name);
-      navigate('/checkin');
+      navigate('/home');
     }
   };
 
