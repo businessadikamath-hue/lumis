@@ -1,6 +1,4 @@
-// src/App.tsx
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { AnimatePresence } from 'framer-motion'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { JournalProvider } from './context/JournalContext'
@@ -38,54 +36,50 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
-// AnimatedRoutes: required so AnimatePresence can detect route changes
+// AnimatedRoutes: simplified to standard routes to fix visibility issues
 function AnimatedRoutes() {
-  const location = useLocation()
-
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
+    <Routes>
 
-        { /* ── PUBLIC ROUTES (no auth required) ── */}
-        <Route path="/"        element={<SplashScreen />}  />
-        <Route path="/welcome"  element={<WelcomeScreen />} />
-        <Route path="/verify"   element={<VerifyScreen />}  />
-        <Route path="/reset-password" element={<ResetPassword />} />
+      { /* ── PUBLIC ROUTES (no auth required) ── */}
+      <Route path="/"        element={<SplashScreen />}  />
+      <Route path="/welcome"  element={<WelcomeScreen />} />
+      <Route path="/verify"   element={<VerifyScreen />}  />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
-        { /* ── PROTECTED ROUTES (auth + trusted device required) ── */}
-        <Route path="/onboarding" element={
-          <ProtectedRoute><OnboardingScreen /></ProtectedRoute>
-        } />
-        <Route path="/home" element={
-          <ProtectedRoute><HomeScreen /></ProtectedRoute>
-        } />
-        <Route path="/checkin" element={
-          <ProtectedRoute><CheckInScreen /></ProtectedRoute>
-        } />
-        <Route path="/entry/:id" element={
-          <ProtectedRoute><EntryDetail /></ProtectedRoute>
-        } />
-        <Route path="/insights" element={
-          <ProtectedRoute><InsightsScreen /></ProtectedRoute>
-        } />
-        <Route path="/prompts" element={
-          <ProtectedRoute><PromptLibrary /></ProtectedRoute>
-        } />
-        <Route path="/history" element={
-          <ProtectedRoute><HistoryScreen /></ProtectedRoute>
-        } />
-        <Route path="/settings" element={
-          <ProtectedRoute><SettingsScreen /></ProtectedRoute>
-        } />
-        <Route path="/reflection/:type" element={
-          <ProtectedRoute><ReflectionScreen /></ProtectedRoute>
-        } />
+      { /* ── PROTECTED ROUTES (auth + trusted device required) ── */}
+      <Route path="/onboarding" element={
+        <ProtectedRoute><OnboardingScreen /></ProtectedRoute>
+      } />
+      <Route path="/home" element={
+        <ProtectedRoute><HomeScreen /></ProtectedRoute>
+      } />
+      <Route path="/checkin" element={
+        <ProtectedRoute><CheckInScreen /></ProtectedRoute>
+      } />
+      <Route path="/entry/:id" element={
+        <ProtectedRoute><EntryDetail /></ProtectedRoute>
+      } />
+      <Route path="/insights" element={
+        <ProtectedRoute><InsightsScreen /></ProtectedRoute>
+      } />
+      <Route path="/prompts" element={
+        <ProtectedRoute><PromptLibrary /></ProtectedRoute>
+      } />
+      <Route path="/history" element={
+        <ProtectedRoute><HistoryScreen /></ProtectedRoute>
+      } />
+      <Route path="/settings" element={
+        <ProtectedRoute><SettingsScreen /></ProtectedRoute>
+      } />
+      <Route path="/reflection/:type" element={
+        <ProtectedRoute><ReflectionScreen /></ProtectedRoute>
+      } />
 
-        { /* ── FALLBACK: any unknown URL → splash ── */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+      { /* ── FALLBACK: any unknown URL → splash ── */}
+      <Route path="*" element={<Navigate to="/" replace />} />
 
-      </Routes>
-    </AnimatePresence>
+    </Routes>
   )
 }
 

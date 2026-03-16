@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useJournal } from '../context/JournalContext';
 
 import { useTheme } from '../context/ThemeContext';
-import { pageVariants, staggerContainer, cardEntrance } from '../animations/variants';
+import { staggerContainer, cardEntrance } from '../animations/variants';
 import { getMoodColor } from '../utils/moodColor';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 import { TabBar } from '../components/TabBar';
@@ -20,15 +20,13 @@ export default function HomeScreen() {
   const chartData = [...entries].reverse().slice(0, 7);
 
   return (
-    <motion.div 
+    <div 
       className="screen"
-      variants={pageVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      style={{ padding: '24px', paddingBottom: '100px' }}
+      style={{ padding: '24px', paddingBottom: '100px', position: 'relative' }}
     >
-      <div className="ambient-bg" />
+      <div className="ambient-bg" style={{ zIndex: 0 }} />
+
+      <div style={{ position: 'relative', zIndex: 2 }}>
 
       <header style={{ marginTop: '40px', marginBottom: '32px' }}>
         <p className="t-caption" style={{ color: 'var(--text-secondary)' }}>Good morning, {firstName}</p>
@@ -106,6 +104,7 @@ export default function HomeScreen() {
       </motion.section>
 
       <TabBar />
-    </motion.div>
+      </div>
+    </div>
   );
 }
