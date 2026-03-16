@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabase';
-import { pageVariants } from '../animations/variants';
 import { Mail, Loader2 } from 'lucide-react';
 
 export default function VerifyScreen() {
