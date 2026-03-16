@@ -21,10 +21,9 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchEntries = async () => {
-    const allEntries = await db.entries.where('deleted').equals(0).toArray();
-    setEntries(allEntries.sort((a, b) => b.createdAt - a.createdAt));
-    setLoading(false);
+  const fetchEntriesFromDexie = async () => {
+    const all = await db.entries.where('deleted').equals(0).toArray();
+    setEntries(all.sort((a, b) => b.createdAt - a.createdAt));
   };
 
   const pullFromSupabase = async () => {
@@ -33,33 +32,41 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
       const { data, error } = await supabase
         .from('entries')
         .select('*')
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .eq('deleted', 0);
 
       if (error) throw error;
 
       if (data) {
-        // Map Supabase fields back to local JournalEntry fields if they differ
-        const mappedEntries: JournalEntry[] = data.map(item => ({
-          ...item,
+        const mapped: JournalEntry[] = data.map(item => ({
+          id: item.id,
           userId: item.user_id,
-          createdAt: item.created_at || item.createdAt,
-          updatedAt: item.updated_at || item.updatedAt,
-          synced: 1
+          date: item.date,
+          mood: item.mood,
+          energy: item.energy,
+          stress: item.stress,
+          emoji: item.emoji,
+          freeText: item.free_text || item.freeText || '',
+          tags: item.tags || [],
+          promptResponses: item.prompt_responses || [],
+          personalStatement: item.personal_statement || [],
+          createdAt: item.created_at,
+          updatedAt: item.updated_at,
+          synced: 1,
+          deleted: 0
         }));
-
-        // Bulk put into Dexie (overwrites existing by ID)
-        await db.entries.bulkPut(mappedEntries);
-        await fetchEntries();
+        await db.entries.bulkPut(mapped);
+        await fetchEntriesFromDexie();
       }
     } catch (err) {
-      console.error('Error pulling from Supabase:', err);
+      console.error('Data pull failed:', err);
     }
   };
 
   useEffect(() => {
     const init = async () => {
       setLoading(true);
-      await fetchEntries();
+      await fetchEntriesFromDexie();
       if (user) {
         await pullFromSupabase();
         await syncEntries();
@@ -83,18 +90,33 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
       deleted: 0
     };
 
+    // Save locally first
     await db.entries.add(entry);
-    await fetchEntries();
+    await fetchEntriesFromDexie();
 
-    if (user) {
+    // If logged in, sync to cloud
+    if (user && localStorage.getItem('lumis_cloud_sync') !== 'false') {
       const { error } = await supabase.from('entries').upsert({
-        ...entry,
+        id: entry.id,
         user_id: user.id,
+        date: entry.date,
+        mood: entry.mood,
+        energy: entry.energy,
+        stress: entry.stress,
+        emoji: entry.emoji,
+        free_text: entry.freeText,
+        tags: entry.tags,
+        prompt_responses: entry.promptResponses,
+        personal_statement: entry.personalStatement,
         created_at: entry.createdAt,
-        updated_at: entry.updatedAt
+        updated_at: entry.updatedAt,
+        deleted: 0
       });
       if (!error) {
         await db.entries.update(entry.id, { synced: 1 });
+        await fetchEntriesFromDexie();
+      } else {
+        console.error('Cloud save error:', error);
       }
     }
   };
@@ -105,14 +127,24 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     const updated = { ...existing, ...updates, updatedAt: Date.now(), synced: 0 as const };
     await db.entries.put(updated);
-    await fetchEntries();
+    await fetchEntriesFromDexie();
 
-    if (user) {
+    if (user && localStorage.getItem('lumis_cloud_sync') !== 'false') {
       const { error } = await supabase.from('entries').upsert({
-        ...updated,
+        id: updated.id,
         user_id: user.id,
+        date: updated.date,
+        mood: updated.mood,
+        energy: updated.energy,
+        stress: updated.stress,
+        emoji: updated.emoji,
+        free_text: updated.freeText,
+        tags: updated.tags,
+        prompt_responses: updated.promptResponses,
+        personal_statement: updated.personalStatement,
+        created_at: updated.createdAt,
         updated_at: updated.updatedAt,
-        created_at: updated.createdAt
+        deleted: 0
       });
       if (!error) {
         await db.entries.update(id, { synced: 1 });
@@ -122,7 +154,7 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const deleteEntry = async (id: string) => {
     await db.entries.update(id, { deleted: 1, synced: 0 });
-    await fetchEntries();
+    await fetchEntriesFromDexie();
 
     if (user) {
       const { error } = await supabase.from('entries').update({ deleted: 1 }).eq('id', id);
@@ -133,20 +165,30 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const syncEntries = async () => {
-    if (!user) return;
+    if (!user || localStorage.getItem('lumis_cloud_sync') === 'false') return;
     const unsynced = await db.entries.where('synced').equals(0).toArray();
     for (const entry of unsynced) {
       const { error } = await supabase.from('entries').upsert({
-        ...entry,
+        id: entry.id,
         user_id: user.id,
+        date: entry.date,
+        mood: entry.mood,
+        energy: entry.energy,
+        stress: entry.stress,
+        emoji: entry.emoji,
+        free_text: entry.freeText,
+        tags: entry.tags,
+        prompt_responses: entry.promptResponses,
+        personal_statement: entry.personalStatement,
         created_at: entry.createdAt,
-        updated_at: entry.updatedAt
+        updated_at: entry.updatedAt,
+        deleted: entry.deleted
       });
       if (!error) {
         await db.entries.update(entry.id, { synced: 1 });
       }
     }
-    await fetchEntries();
+    await fetchEntriesFromDexie();
   };
 
   return (
