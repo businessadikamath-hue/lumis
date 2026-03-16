@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { pageVariants } from '../animations/variants';
 
 const SLIDES = [
   {
@@ -37,52 +36,61 @@ export default function OnboardingScreen() {
   };
 
   return (
-    <motion.div 
+    <div 
       className="screen"
-      variants={pageVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      style={{ padding: '32px', display: 'flex', flexDirection: 'column', height: '100vh', justifyContent: 'center' }}
+      style={{ padding: '32px', display: 'flex', flexDirection: 'column', height: '100vh', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}
     >
-      <div className="ambient-bg" />
+      <div className="ambient-bg" style={{ zIndex: 0 }} />
 
-      <AnimatePresence mode="wait">
-        <motion.div 
-          key={currentSlide}
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -50 }}
-          style={{ textAlign: 'left' }}
-        >
-          <div style={{ fontSize: '80px', marginBottom: '40px' }}>{SLIDES[currentSlide].icon}</div>
-          <h1 className="t-display" style={{ marginBottom: '16px' }}>{SLIDES[currentSlide].title}</h1>
-          <p className="t-body" style={{ color: 'var(--text-secondary)', marginBottom: '40px' }}>{SLIDES[currentSlide].sub}</p>
-          
-          {currentSlide === 2 && (
-            <div style={{ marginBottom: '40px' }}>
-              <input 
-                type="text" className="glass-input" placeholder="What should we call you?"
-                value={name} onChange={e => setName(e.target.value)}
-              />
-            </div>
-          )}
-        </motion.div>
-      </AnimatePresence>
-
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '40px' }}>
-        {SLIDES.map((_, i) => (
+      <div style={{ position: 'relative', zIndex: 2 }}>
+        <AnimatePresence mode="wait">
           <motion.div 
-            key={i}
-            animate={{ width: currentSlide === i ? '24px' : '8px' }}
-            style={{ height: '8px', borderRadius: '4px', background: currentSlide === i ? 'var(--accent-violet)' : 'rgba(255,255,255,0.2)' }}
-          />
-        ))}
-      </div>
+            key={currentSlide}
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -30 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            style={{ textAlign: 'left' }}
+          >
+            <div style={{ fontSize: '72px', marginBottom: '32px' }}>{SLIDES[currentSlide].icon}</div>
+            <h1 className="t-display" style={{ marginBottom: '16px', fontSize: '32px', lineHeight: '1.2' }}>{SLIDES[currentSlide].title}</h1>
+            <p className="t-body" style={{ color: 'var(--text-secondary)', marginBottom: '32px', fontSize: '18px' }}>{SLIDES[currentSlide].sub}</p>
+            
+            {currentSlide === 2 && (
+              <div style={{ marginBottom: '32px' }}>
+                <input 
+                  type="text" className="glass-input" placeholder="What should we call you?"
+                  value={name} onChange={e => setName(e.target.value)}
+                  style={{ background: 'rgba(255,255,255,0.08)', color: 'white' }}
+                />
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
 
-      <button className="btn-primary" onClick={handleNext}>
-        {currentSlide === 2 ? 'Begin journaling →' : 'Continue'}
-      </button>
-    </motion.div>
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '40px' }}>
+          {SLIDES.map((_, i) => (
+            <div 
+              key={i}
+              style={{ 
+                height: '8px', 
+                borderRadius: '4px', 
+                background: currentSlide === i ? 'var(--accent-violet)' : 'rgba(255,255,255,0.15)',
+                width: currentSlide === i ? '24px' : '8px',
+                transition: 'all 0.4s var(--ease-out)'
+              }}
+            />
+          ))}
+        </div>
+
+        <button 
+          className="btn-primary" 
+          onClick={handleNext}
+          style={{ background: 'var(--accent-violet)', border: 'none', color: 'white', borderRadius: '100px', cursor: 'pointer' }}
+        >
+          {currentSlide === 2 ? 'Begin journaling →' : 'Continue'}
+        </button>
+      </div>
+    </div>
   );
 }
