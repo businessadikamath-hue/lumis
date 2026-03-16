@@ -24,11 +24,15 @@ export default function InsightsScreen() {
 
   const avgMood = entries.length > 0 ? (entries.reduce((acc, curr) => acc + curr.mood, 0) / entries.length).toFixed(1) : 0;
 
-  const handleGenerateAI = async () => {
+  const [aiReportType, setAiReportType] = useState<'weekly' | 'monthly' | null>(null);
+
+  const handleGenerateAI = async (type: 'weekly' | 'monthly') => {
     setAiLoading(true);
     setAiError(null);
+    setAiReportType(type);
     try {
-      const result = await generateAIOverview(entries.slice(0, 10)); // Analyze last 10 entries
+      const sliceCount = type === 'weekly' ? 7 : 30;
+      const result = await generateAIOverview(entries.slice(0, sliceCount), type);
       setAiResult(result);
     } catch (err: any) {
       setAiError(err.message || "Something went wrong.");
@@ -55,7 +59,7 @@ export default function InsightsScreen() {
           {entries.length < 5 ? (
             <div className="glass-card" style={{ padding: '24px', textAlign: 'center', background: 'rgba(124, 107, 255, 0.05)', border: '1px dashed var(--accent-violet-20)' }}>
               <Sparkles size={32} color="var(--accent-violet)" style={{ margin: '0 auto 16px', opacity: 0.5 }} />
-              <p className="t-heading" style={{ fontSize: '16px', marginBottom: '8px' }}>AI Overview</p>
+              <p className="t-heading" style={{ fontSize: '16px', marginBottom: '8px' }}>AI Reports</p>
               <p className="t-caption" style={{ color: 'var(--text-secondary)' }}>You need at least 5 entries to unlock AI insights. Keep journaling!</p>
               <div style={{ marginTop: '16px', height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px' }}>
                 <div style={{ width: `${(entries.length / 5) * 100}%`, height: '100%', background: 'var(--accent-violet)', borderRadius: '2px' }} />
@@ -68,21 +72,26 @@ export default function InsightsScreen() {
                   <Sparkles size={20} />
                 </div>
                 <div>
-                  <h3 className="t-heading" style={{ fontSize: '16px' }}>AI Overview</h3>
-                  <p className="t-caption" style={{ color: 'rgba(255,255,255,0.5)' }}>Analyzing your patterns...</p>
+                  <h3 className="t-heading" style={{ fontSize: '16px' }}>AI Reports</h3>
+                  <p className="t-caption" style={{ color: 'rgba(255,255,255,0.5)' }}>Periodic patterns & correlations</p>
                 </div>
               </div>
 
               {!aiResult && !aiLoading && (
-                <button className="btn-primary" onClick={handleGenerateAI} style={{ height: '44px', fontSize: '14px' }}>
-                  Generate Reflection
-                </button>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button className="btn-primary" onClick={() => handleGenerateAI('weekly')} style={{ height: '44px', fontSize: '14px', flex: 1, background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)' }}>
+                    Weekly
+                  </button>
+                  <button className="btn-primary" onClick={() => handleGenerateAI('monthly')} style={{ height: '44px', fontSize: '14px', flex: 1 }}>
+                    Monthly
+                  </button>
+                </div>
               )}
 
               {aiLoading && (
                 <div style={{ textAlign: 'center', padding: '20px' }}>
                   <Loader2 className="spin" size={24} color="var(--accent-violet)" style={{ margin: '0 auto' }} />
-                  <p className="t-caption" style={{ marginTop: '12px' }}>Connecting with Claude...</p>
+                  <p className="t-caption" style={{ marginTop: '12px' }}>Generating {aiReportType} report...</p>
                 </div>
               )}
 
@@ -93,6 +102,10 @@ export default function InsightsScreen() {
               <AnimatePresence>
                 {aiResult && (
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                      <p className="t-mono" style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', opacity: 0.6 }}>{aiReportType} Analysis</p>
+                      <button onClick={() => { setAiResult(null); setAiReportType(null); }} style={{ background: 'transparent', border: 'none', color: 'var(--accent-violet)', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>New Report</button>
+                    </div>
                     <p className="t-body" style={{ fontSize: '15px', color: 'white', marginBottom: '16px', lineHeight: '1.6' }}>
                       {aiResult.summary}
                     </p>

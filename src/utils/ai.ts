@@ -3,10 +3,10 @@ import type { JournalEntry } from '../types/entry';
 
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 
-export async function generateAIOverview(entries: JournalEntry[]) {
+export async function generateAIOverview(entries: JournalEntry[], type: 'weekly' | 'monthly') {
   const apiKey = import.meta.env.VITE_CLAUDE_API_KEY;
 
-  if (!apiKey) {
+  if (!apiKey || apiKey === 'your_claude_api_key_here') {
     throw new Error('Claude API key not found. Please set VITE_CLAUDE_API_KEY in your .env file.');
   }
 
@@ -21,18 +21,23 @@ export async function generateAIOverview(entries: JournalEntry[]) {
   }));
 
   const prompt = `
-    You are an empathetic mental health AI analyzer. 
-    Analyze the following journal entries and mood data for a student. 
-    Look for correlations between their life events (in the text) and their mood scores.
+    You are an empathetic mental health AI analyzer for the app Lumis.
+    Task: Provide a ${type} report for the student user based on their data.
     
-    Data:
+    Data for the ${type}:
     ${JSON.stringify(formattedEntries, null, 2)}
     
-    Output Format (JSON):
+    Instructions:
+    1. Analyze the correlation between life events mentioned in the text and the mood/energy/stress scores.
+    2. Be specific. If they mention a "test", "dog", "gym", or "friend", explain how it affected their scores over time.
+    3. Example: "When you had to take your dog to the vet, it led to lower moods and lower sleep for nearly a week."
+    4. Provide actionable, supportive insights.
+
+    Output Format (JSON strictly):
     {
-      "summary": "2-3 sentences overall",
-      "correlations": ["bullet point correlation 1", "bullet point correlation 2"],
-      "emotionalTone": "one word"
+      "summary": "2-3 sentences overview of the ${type}",
+      "correlations": ["3-4 specific bullet point correlations"],
+      "emotionalTone": "one word (e.g. improving, tired, stable, anxious)"
     }
   `;
 
@@ -42,7 +47,7 @@ export async function generateAIOverview(entries: JournalEntry[]) {
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
-      'dangerouslyAllowBrowser': 'true' // Note: This header is usually for SDK, direct fetch might need different handling or a proxy
+      'dangerouslyAllowBrowser': 'true'
     },
     body: JSON.stringify({
       model: 'claude-3-haiku-20240307',
@@ -61,11 +66,15 @@ export async function generateAIOverview(entries: JournalEntry[]) {
   const result = await response.json();
   const content = result.content[0].text;
   
-  // Try to parse the JSON out of the response
   try {
     const jsonStart = content.indexOf('{');
     const jsonEnd = content.lastIndexOf('}') + 1;
-    return JSON.parse(content.substring(jsonStart, jsonEnd));
+    const parsed = JSON.parse(content.substring(jsonStart, jsonEnd));
+    return {
+      summary: parsed.summary || "No summary provided.",
+      correlations: parsed.correlations || [],
+      emotionalTone: parsed.emotionalTone || "Unknown"
+    };
   } catch (e) {
     return {
       summary: content,
