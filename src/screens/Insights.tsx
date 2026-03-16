@@ -23,6 +23,8 @@ export default function InsightsScreen() {
   }));
 
   const avgMood = entries.length > 0 ? (entries.reduce((acc, curr) => acc + curr.mood, 0) / entries.length).toFixed(1) : 0;
+  const avgEnergy = entries.length > 0 ? (entries.reduce((acc, curr) => acc + curr.energy, 0) / entries.length).toFixed(1) : 0;
+  const avgStress = entries.length > 0 ? (entries.reduce((acc, curr) => acc + curr.stress, 0) / entries.length).toFixed(1) : 0;
 
   const [aiReportType, setAiReportType] = useState<'weekly' | 'monthly' | null>(null);
 
@@ -42,14 +44,11 @@ export default function InsightsScreen() {
   };
 
   return (
-    <div 
-      className="screen"
-      style={{ padding: '24px', paddingBottom: '100px' }}
-    >
+    <div className="screen" style={{ padding: '24px', paddingBottom: '110px' }}>
       <div className="ambient-bg" style={{ zIndex: 0 }} />
       
       <div style={{ position: 'relative', zIndex: 2 }}>
-        <header style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
+        <header style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px', marginTop: '20px' }}>
           <button onClick={() => navigate('/home')} style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}><ChevronLeft /></button>
           <h1 className="t-title">Insights</h1>
         </header>
@@ -57,13 +56,10 @@ export default function InsightsScreen() {
         {/* AI Overview Section */}
         <section style={{ marginBottom: '32px' }}>
           {entries.length < 5 ? (
-            <div className="glass-card" style={{ padding: '24px', textAlign: 'center', background: 'rgba(124, 107, 255, 0.05)', border: '1px dashed var(--accent-violet-20)' }}>
+            <div className="glass-card" style={{ padding: '24px', textAlign: 'center', border: '1px dashed var(--accent-violet-20)' }}>
               <Sparkles size={32} color="var(--accent-violet)" style={{ margin: '0 auto 16px', opacity: 0.5 }} />
               <p className="t-heading" style={{ fontSize: '16px', marginBottom: '8px' }}>AI Reports</p>
-              <p className="t-caption" style={{ color: 'var(--text-secondary)' }}>You need at least 5 entries to unlock AI insights. Keep journaling!</p>
-              <div style={{ marginTop: '16px', height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px' }}>
-                <div style={{ width: `${(entries.length / 5) * 100}%`, height: '100%', background: 'var(--accent-violet)', borderRadius: '2px' }} />
-              </div>
+              <p className="t-caption" style={{ color: 'var(--text-secondary)' }}>You need at least 5 entries for AI reports.</p>
             </div>
           ) : (
             <div className="glass-card" style={{ padding: '24px', background: 'linear-gradient(135deg, rgba(124, 107, 255, 0.1) 0%, rgba(94, 196, 255, 0.05) 100%)', border: '1px solid var(--accent-violet-20)' }}>
@@ -79,90 +75,99 @@ export default function InsightsScreen() {
 
               {!aiResult && !aiLoading && (
                 <div style={{ display: 'flex', gap: '12px' }}>
-                  <button className="btn-primary" onClick={() => handleGenerateAI('weekly')} style={{ height: '44px', fontSize: '14px', flex: 1, background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)' }}>
-                    Weekly
-                  </button>
-                  <button className="btn-primary" onClick={() => handleGenerateAI('monthly')} style={{ height: '44px', fontSize: '14px', flex: 1 }}>
-                    Monthly
-                  </button>
+                  <button className="btn-primary" onClick={() => handleGenerateAI('weekly')} style={{ flex: 1, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.1)', height: '44px' }}>Weekly</button>
+                  <button className="btn-primary" onClick={() => handleGenerateAI('monthly')} style={{ flex: 1, height: '44px' }}>Monthly</button>
                 </div>
               )}
 
               {aiLoading && (
                 <div style={{ textAlign: 'center', padding: '20px' }}>
-                  <Loader2 className="spin" size={24} color="var(--accent-violet)" style={{ margin: '0 auto' }} />
+                  <Loader2 className="spin" size={24} color="var(--accent-violet)" />
                   <p className="t-caption" style={{ marginTop: '12px' }}>Generating {aiReportType} report...</p>
                 </div>
               )}
 
-              {aiError && (
-                <p className="t-caption" style={{ color: '#ff4757', marginTop: '12px' }}>{aiError}</p>
+              {aiResult && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <p className="t-mono" style={{ fontSize: '10px', opacity: 0.5 }}>{aiReportType?.toUpperCase()} REPORT</p>
+                    <button onClick={() => setAiResult(null)} style={{ background: 'transparent', border: 'none', color: 'var(--accent-violet)', fontSize: '11px', fontWeight: 700 }}>New Report</button>
+                  </div>
+                  <p className="t-body" style={{ fontSize: '15px', color: 'white', marginBottom: '16px', lineHeight: '1.5' }}>{aiResult.summary}</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {aiResult.correlations.map((c, i) => (
+                      <div key={i} style={{ display: 'flex', gap: '8px' }}>
+                        <span style={{ color: 'var(--accent-violet)' }}>•</span>
+                        <p className="t-caption" style={{ color: 'rgba(255,255,255,0.7)', lineHeight: '1.4' }}>{c}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ marginTop: '16px', display: 'inline-block', padding: '4px 12px', borderRadius: '100px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                    <p className="t-mono" style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px' }}>Tone: {aiResult.emotionalTone}</p>
+                  </div>
+                </motion.div>
               )}
-
-              <AnimatePresence>
-                {aiResult && (
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                      <p className="t-mono" style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', opacity: 0.6 }}>{aiReportType} Analysis</p>
-                      <button onClick={() => { setAiResult(null); setAiReportType(null); }} style={{ background: 'transparent', border: 'none', color: 'var(--accent-violet)', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>New Report</button>
-                    </div>
-                    <p className="t-body" style={{ fontSize: '15px', color: 'white', marginBottom: '16px', lineHeight: '1.6' }}>
-                      {aiResult.summary}
-                    </p>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      {aiResult.correlations.map((c, i) => (
-                        <div key={i} style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                          <span style={{ color: 'var(--accent-violet)' }}>•</span>
-                          <p className="t-caption" style={{ color: 'var(--text-secondary)', lineHeight: '1.4' }}>{c}</p>
-                        </div>
-                      ))}
-                    </div>
-                    <div style={{ marginTop: '16px', display: 'inline-block', padding: '4px 12px', borderRadius: '100px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                      <p className="t-mono" style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px' }}>Tone: {aiResult.emotionalTone}</p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </div>
           )}
         </section>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '32px' }}>
-          <div className="glass-card" style={{ padding: '20px', textAlign: 'center' }}>
-            <p className="t-caption" style={{ color: 'var(--text-secondary)' }}>Avg Mood</p>
-            <p className="t-display" style={{ fontSize: '32px', color: getMoodColor(Number(avgMood)) }}>{avgMood}</p>
+        {/* Global Stats */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '32px' }}>
+          <div className="glass-card" style={{ padding: '16px', textAlign: 'center' }}>
+            <p className="t-caption" style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>Mood</p>
+            <p className="t-heading" style={{ fontSize: '20px', color: getMoodColor(Number(avgMood)) }}>{avgMood}</p>
           </div>
-          <div className="glass-card" style={{ padding: '20px', textAlign: 'center' }}>
-            <p className="t-caption" style={{ color: 'var(--text-secondary)' }}>Entries</p>
-            <p className="t-display" style={{ fontSize: '32px' }}>{entries.length}</p>
+          <div className="glass-card" style={{ padding: '16px', textAlign: 'center' }}>
+            <p className="t-caption" style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>Energy</p>
+            <p className="t-heading" style={{ fontSize: '20px', color: '#5ec4ff' }}>{avgEnergy}</p>
+          </div>
+          <div className="glass-card" style={{ padding: '16px', textAlign: 'center' }}>
+            <p className="t-caption" style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>Stress</p>
+            <p className="t-heading" style={{ fontSize: '20px', color: '#ff8c69' }}>{avgStress}</p>
           </div>
         </div>
 
-        <div className="glass-card" style={{ padding: '20px', height: '300px', marginBottom: '32px' }}>
-          <p className="t-heading" style={{ marginBottom: '16px' }}>Trends</p>
+        {/* Detailed Graph */}
+        <div className="glass-card" style={{ padding: '20px', height: '340px', marginBottom: '32px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+            <h3 className="t-heading">Trends</h3>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <div style={{ width: '8px', height: '2px', background: 'var(--accent-violet)' }} />
+                <span style={{ fontSize: '9px', opacity: 0.5 }}>Mood</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <div style={{ width: '8px', height: '2px', background: '#5ec4ff' }} />
+                <span style={{ fontSize: '9px', opacity: 0.5 }}>Energy</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <div style={{ width: '8px', height: '2px', background: '#ff8c69' }} />
+                <span style={{ fontSize: '9px', opacity: 0.5 }}>Stress</span>
+              </div>
+            </div>
+          </div>
           <ResponsiveContainer width="100%" height="80%">
             <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="date" tick={{ fill: 'var(--text-tertiary)', fontSize: 10 }} />
-              <YAxis domain={[1, 10]} tick={{ fill: 'var(--text-tertiary)', fontSize: 10 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+              <XAxis dataKey="date" tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }} axisLine={false} tickLine={false} />
+              <YAxis domain={[0, 10]} hide />
               <Tooltip 
                 contentStyle={{ background: 'rgba(18,20,40,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
-                itemStyle={{ fontSize: '12px' }}
+                itemStyle={{ fontSize: '11px' }}
               />
               <Line type="monotone" dataKey="mood" stroke="var(--accent-violet)" strokeWidth={3} dot={false} />
+              <Line type="monotone" dataKey="energy" stroke="#5ec4ff" strokeWidth={2} dot={false} />
               <Line type="monotone" dataKey="stress" stroke="#ff8c69" strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
         <section>
-          <h3 className="t-heading" style={{ marginBottom: '16px' }}>Tags Distribution</h3>
+          <h3 className="t-heading" style={{ marginBottom: '16px' }}>Context Distribution</h3>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            {Array.from(new Set(entries.flatMap(e => e.tags))).map(tag => (
-              <div key={tag} className="glass-card" style={{ padding: '8px 16px', fontSize: '13px' }}>
-                {tag} <span style={{ color: 'var(--text-tertiary)', marginLeft: '4px' }}>
-                  {entries.filter(e => e.tags.includes(tag)).length}
-                </span>
+            {Array.from(new Set(entries.flatMap(e => e.tags))).slice(0, 10).map(tag => (
+              <div key={tag} className="glass-card" style={{ padding: '8px 16px', fontSize: '13px', background: 'rgba(255,255,255,0.02)' }}>
+                {tag}
               </div>
             ))}
           </div>

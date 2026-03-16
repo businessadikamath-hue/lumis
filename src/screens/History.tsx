@@ -49,14 +49,22 @@ export default function HistoryScreen() {
             className="glass-card" 
             style={{ padding: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer' }}
           >
-            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: getMoodColor(entry.mood) + '22', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
+            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: getMoodColor(entry.mood) + '15', border: '1px solid ' + getMoodColor(entry.mood) + '44', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
               {entry.emoji}
             </div>
             <div style={{ flex: 1 }}>
               <p className="t-heading" style={{ fontSize: '14px' }}>{new Date(entry.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric' })}</p>
-              <p className="t-caption" style={{ color: 'var(--text-tertiary)' }}>{entry.tags.slice(0, 2).join(' • ')}</p>
+              <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                <span className="t-mono" style={{ fontSize: '10px', color: getMoodColor(entry.mood) }}>M:{entry.mood}</span>
+                <span className="t-mono" style={{ fontSize: '10px', color: '#5ec4ff' }}>E:{entry.energy}</span>
+                <span className="t-mono" style={{ fontSize: '10px', color: '#ff8c69' }}>S:{entry.stress}</span>
+              </div>
             </div>
-            <p className="t-title" style={{ fontSize: '18px', color: getMoodColor(entry.mood) }}>{entry.mood}</p>
+            <div style={{ display: 'flex', gap: '4px' }}>
+              {entry.tags.slice(0, 1).map(t => (
+                <span key={t} className="t-caption" style={{ padding: '2px 8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', fontSize: '9px' }}>{t}</span>
+              ))}
+            </div>
           </motion.div>
         ))}
       </motion.div>

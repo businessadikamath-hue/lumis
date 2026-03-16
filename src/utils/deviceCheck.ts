@@ -39,9 +39,6 @@ export const checkDeviceAndAuth = async (): Promise<AppRoute> => {
   const onboarded = localStorage.getItem('lumis_onboarded');
   if (!onboarded) return '/onboarding';
 
-  // Check if today's entry already exists
-  const today = new Date().toISOString().split('T')[0];
-  const todayEntry = await db.entries.where('date').equals(today).first();
-  
-  return todayEntry ? '/home' : '/checkin';
+  // Landing page is now always Home.
+  return '/home';
 };

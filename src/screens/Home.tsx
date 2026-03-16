@@ -1,110 +1,93 @@
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useJournal } from '../context/JournalContext';
-
-import { useTheme } from '../context/ThemeContext';
-import { staggerContainer, cardEntrance } from '../animations/variants';
-import { getMoodColor } from '../utils/moodColor';
-import { AreaChart, Area, ResponsiveContainer } from 'recharts';
+import { useAuth } from '../context/AuthContext';
 import { TabBar } from '../components/TabBar';
+import { Calendar } from '../components/Calendar';
+import { Sparkles, History, Layout } from 'lucide-react';
 
 export default function HomeScreen() {
-  const { entries, todayEntry } = useJournal();
-  const { moodColor } = useTheme();
+  const { entries } = useJournal();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
-  const firstName = localStorage.getItem('lumis_name') || 'there';
-  const today = new Date();
-  const dateFormatted = today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-
-  const chartData = [...entries].reverse().slice(0, 7);
+  const userName = user?.user_metadata?.first_name || localStorage.getItem('lumis_name') || 'there';
+  const entryCount = entries.length;
 
   return (
-    <div 
-      className="screen"
-      style={{ padding: '24px', paddingBottom: '100px', position: 'relative' }}
-    >
+    <div className="screen" style={{ padding: '24px', paddingBottom: '110px' }}>
       <div className="ambient-bg" style={{ zIndex: 0 }} />
-
+      
       <div style={{ position: 'relative', zIndex: 2 }}>
-
-      <header style={{ marginTop: '40px', marginBottom: '32px' }}>
-        <p className="t-caption" style={{ color: 'var(--text-secondary)' }}>Good morning, {firstName}</p>
-        <h1 className="t-display" style={{ color: 'white' }}>{dateFormatted}</h1>
-        
-        {todayEntry ? (
-          <div style={{ marginTop: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '32px' }}>{todayEntry.emoji}</span>
-            <span className="t-title" style={{ color: getMoodColor(todayEntry.mood) }}>{todayEntry.mood}/10</span>
+        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', marginTop: '20px' }}>
+          <div>
+            <h1 className="t-title" style={{ fontSize: '28px', color: 'white' }}>Hello, {userName}</h1>
+            <p className="t-caption" style={{ color: 'var(--text-secondary)' }}>You have {entryCount} total entries</p>
           </div>
-        ) : (
-          <motion.button 
-            onClick={() => navigate('/checkin')}
-            className="glass-card"
-            animate={{ opacity: [0.7, 1, 0.7] }}
-            transition={{ duration: 3, repeat: Infinity }}
-            style={{ marginTop: '16px', width: '100%', padding: '20px', textAlign: 'left', borderLeft: '3px solid var(--accent-violet)', cursor: 'pointer' }}
+          <div 
+            onClick={() => navigate('/settings')}
+            style={{ width: '44px', height: '44px', borderRadius: '15px', background: 'var(--accent-violet-20)', overflow: 'hidden', border: '1px solid var(--glass-border-hi)', cursor: 'pointer' }}
           >
-            <p className="t-heading">How are you feeling today? →</p>
-          </motion.button>
-        )}
-      </header>
+             <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.id || 'lumis'}`} alt="profile" style={{ width: '100%', height: '100%' }} />
+          </div>
+        </header>
 
-      <div className="glass-card" style={{ padding: '20px', marginBottom: '24px' }}>
-        <p className="t-caption" style={{ marginBottom: '12px' }}>This week</p>
-        <div style={{ height: '80px', width: '100%' }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData}>
-              <defs>
-                <linearGradient id="moodGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={moodColor} stopOpacity={0.4}/>
-                  <stop offset="100%" stopColor={moodColor} stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <Area 
-                type="monotone" 
-                dataKey="mood" 
-                stroke={moodColor} 
-                strokeWidth={2} 
-                fill="url(#moodGrad)" 
-                isAnimationActive={true}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+        {/* Welcome Graphic Card */}
+        <div 
+          className="glass-card" 
+          style={{ 
+            padding: '0', 
+            borderRadius: '24px', 
+            overflow: 'hidden', 
+            marginBottom: '32px', 
+            position: 'relative', 
+            height: '200px',
+            border: '1px solid var(--glass-border-hi)'
+          }}
+        >
+          <img 
+            src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" 
+            alt="Welcome" 
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(18,20,40,0.9), transparent)', padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <div style={{ padding: '4px 8px', borderRadius: '8px', background: 'var(--accent-violet)', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase' }}>Daily Flow</div>
+            </div>
+            <h2 className="t-heading" style={{ color: 'white', fontSize: '20px', marginBottom: '4px' }}>Ready to reflect?</h2>
+            <p className="t-caption" style={{ color: 'rgba(255,255,255,0.6)', lineHeight: '1.4' }}>Taking a moment for yourself is the first step to clarity.</p>
+          </div>
+        </div>
+
+        {/* Calendar Grid */}
+        <div style={{ marginBottom: '32px' }}>
+          <Calendar entries={entries} />
+        </div>
+
+        {/* Quick Actions */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <button 
+             onClick={() => navigate('/history')}
+             className="glass-card" 
+             style={{ padding: '20px', textAlign: 'left', background: 'rgba(255,255,255,0.02)', cursor: 'pointer' }}
+          >
+            <History size={20} color="var(--accent-violet)" style={{ marginBottom: '12px' }} />
+            <p className="t-heading" style={{ fontSize: '14px' }}>History</p>
+            <p className="t-caption" style={{ fontSize: '11px', opacity: 0.5 }}>Your journey</p>
+          </button>
+          
+          <button 
+             onClick={() => navigate('/insights')}
+             className="glass-card" 
+             style={{ padding: '20px', textAlign: 'left', background: 'rgba(255,255,255,0.02)', cursor: 'pointer' }}
+          >
+            <Sparkles size={20} color="var(--accent-violet)" style={{ marginBottom: '12px' }} />
+            <p className="t-heading" style={{ fontSize: '14px' }}>Insights</p>
+            <p className="t-caption" style={{ fontSize: '11px', opacity: 0.5 }}>AI patterns</p>
+          </button>
         </div>
       </div>
 
-      <motion.section 
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-        style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
-      >
-        <h3 className="t-heading">Recent</h3>
-        {entries.slice(0, 5).map(entry => (
-          <motion.div 
-            key={entry.id} 
-            variants={cardEntrance}
-            onClick={() => navigate(`/entry/${entry.id}`)}
-            className="glass-card" 
-            style={{ padding: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer' }}
-          >
-            <span style={{ fontSize: '24px' }}>{entry.emoji}</span>
-            <div style={{ flex: 1 }}>
-              <p className="t-heading" style={{ fontSize: '14px' }}>{new Date(entry.date).toLocaleDateString()}</p>
-              <p className="t-caption" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '180px' }}>
-                {entry.freeText || 'No text entry'}
-              </p>
-            </div>
-            <div style={{ padding: '4px 8px', borderRadius: '8px', background: getMoodColor(entry.mood) + '22', color: getMoodColor(entry.mood), fontWeight: '700' }}>
-              {entry.mood}
-            </div>
-          </motion.div>
-        ))}
-      </motion.section>
-
       <TabBar />
-      </div>
     </div>
   );
 }
