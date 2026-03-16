@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { ChevronLeft, LogOut, Bell, Cloud, Trash2, Palette, User, ShieldCheck, Mail, Loader2, RefreshCcw } from 'lucide-react';
+import { ChevronLeft, LogOut, Cloud, Trash2, Palette, Mail, Loader2 } from 'lucide-react';
 import { TabBar } from '../components/TabBar';
 import { supabase } from '../lib/supabase';
 

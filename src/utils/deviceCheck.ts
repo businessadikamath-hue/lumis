@@ -1,5 +1,4 @@
 import { supabase } from '../lib/supabase';
-import { db } from '../db/db';
 
 export type AppRoute = '/welcome' | '/onboarding' | '/home' | '/checkin';
 
