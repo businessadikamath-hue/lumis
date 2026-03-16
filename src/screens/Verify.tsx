@@ -38,6 +38,22 @@ export default function VerifyScreen() {
     }
   };
 
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pasteData = e.clipboardData.getData('text').trim().slice(0, 8);
+    if (!/^\d+$/.test(pasteData)) return;
+    
+    const newDigits = [...digits];
+    pasteData.split('').forEach((char, i) => {
+      newDigits[i] = char;
+    });
+    setDigits(newDigits);
+    
+    // Focus the next available slot
+    const lastIndex = Math.min(pasteData.length, 7);
+    document.getElementById(`digit-${lastIndex}`)?.focus();
+  };
+
   useEffect(() => {
     const code = digits.join('');
     if (code.length === 8) verifyCode(code);
@@ -91,31 +107,49 @@ export default function VerifyScreen() {
   return (
     <div 
       className="screen"
-      style={{ padding: '32px', textAlign: 'center', position: 'relative', zIndex: 10, color: 'white' }}
+      style={{ padding: '24px', textAlign: 'center', position: 'relative', zIndex: 10, color: 'white' }}
     >
       <div className="ambient-bg" />
       
       <div style={{ marginTop: '80px', marginBottom: '40px', position: 'relative', zIndex: 2 }}>
-        <Mail size={64} color="#7c6bff" style={{ margin: '0 auto' }} />
+        <Mail size={56} color="#7c6bff" style={{ margin: '0 auto' }} />
         <h1 className="t-title" style={{ marginTop: '24px', color: 'white', fontSize: '24px' }}>Check your inbox</h1>
-        <p className="t-body" style={{ color: 'rgba(255,255,255,0.7)', marginTop: '12px' }}>
+        <p className="t-body" style={{ color: 'rgba(255,255,255,0.7)', marginTop: '12px', fontSize: '15px' }}>
           We sent an 8-digit code to <br/>
           <strong style={{ color: 'white' }}>{email || 'your email'}</strong>
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', maxWidth: '300px', margin: '0 auto 32px', position: 'relative', zIndex: 2 }}>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        gap: '6px', 
+        width: '100%', 
+        maxWidth: '420px', 
+        margin: '0 auto 32px', 
+        position: 'relative', 
+        zIndex: 2 
+      }}>
         {digits.map((d, i) => (
           <input 
             key={i} id={`digit-${i}`}
             type="text" inputMode="numeric" maxLength={1}
             value={d} onChange={e => handleChange(i, e.target.value)}
             onKeyDown={e => handleKeyDown(i, e)}
+            onPaste={handlePaste}
             disabled={loading}
             style={{ 
-              width: '100%', height: '60px', borderRadius: '12px', background: 'rgba(255,255,255,0.1)', 
-              border: '2px solid rgba(255,255,255,0.2)', color: 'white', 
-              fontSize: '24px', fontWeight: '700', textAlign: 'center', outline: 'none'
+              flex: 1, 
+              minWidth: '0',
+              height: '52px', 
+              borderRadius: '10px', 
+              background: 'rgba(255,255,255,0.1)', 
+              border: '2px solid rgba(255,255,255,0.2)', 
+              color: 'white', 
+              fontSize: '20px', 
+              fontWeight: '700', 
+              textAlign: 'center', 
+              outline: 'none'
             }}
           />
         ))}
