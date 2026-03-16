@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 import { Mail, Loader2 } from 'lucide-react';
 
 export default function VerifyScreen() {
-  const [digits, setDigits] = useState(['', '', '', '', '', '']);
+  const [digits, setDigits] = useState(['', '', '', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [countdown, setCountdown] = useState(60);
@@ -25,7 +25,7 @@ export default function VerifyScreen() {
     newDigits[index] = val;
     setDigits(newDigits);
 
-    if (val && index < 5) {
+    if (val && index < 7) {
       const nextInput = document.getElementById(`digit-${index + 1}`);
       nextInput?.focus();
     }
@@ -40,7 +40,7 @@ export default function VerifyScreen() {
 
   useEffect(() => {
     const code = digits.join('');
-    if (code.length === 6) verifyCode(code);
+    if (code.length === 8) verifyCode(code);
   }, [digits]);
 
   const verifyCode = async (code: string) => {
@@ -56,7 +56,7 @@ export default function VerifyScreen() {
 
     if (error) {
       setError("That code isn't right. Check your email and try again.");
-      setDigits(['', '', '', '', '', '']);
+      setDigits(['', '', '', '', '', '', '', '']);
       setLoading(false);
       return;
     }
@@ -99,12 +99,12 @@ export default function VerifyScreen() {
         <Mail size={64} color="#7c6bff" style={{ margin: '0 auto' }} />
         <h1 className="t-title" style={{ marginTop: '24px', color: 'white', fontSize: '24px' }}>Check your inbox</h1>
         <p className="t-body" style={{ color: 'rgba(255,255,255,0.7)', marginTop: '12px' }}>
-          We sent a 6-digit code to <br/>
+          We sent an 8-digit code to <br/>
           <strong style={{ color: 'white' }}>{email || 'your email'}</strong>
         </p>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '32px', position: 'relative', zIndex: 2 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', maxWidth: '300px', margin: '0 auto 32px', position: 'relative', zIndex: 2 }}>
         {digits.map((d, i) => (
           <input 
             key={i} id={`digit-${i}`}
@@ -113,9 +113,9 @@ export default function VerifyScreen() {
             onKeyDown={e => handleKeyDown(i, e)}
             disabled={loading}
             style={{ 
-              width: '48px', height: '60px', borderRadius: '12px', background: 'rgba(255,255,255,0.1)', 
+              width: '100%', height: '60px', borderRadius: '12px', background: 'rgba(255,255,255,0.1)', 
               border: '2px solid rgba(255,255,255,0.2)', color: 'white', 
-              fontSize: '28px', fontWeight: '700', textAlign: 'center', outline: 'none'
+              fontSize: '24px', fontWeight: '700', textAlign: 'center', outline: 'none'
             }}
           />
         ))}
