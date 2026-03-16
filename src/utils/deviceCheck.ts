@@ -27,13 +27,8 @@ export const checkDeviceAndAuth = async (): Promise<AppRoute> => {
     return '/welcome';
   }
 
-  // Step 3: Authenticated — check if this is a newly trusted device
-  const isTrusted = localStorage.getItem('lumis_device_trusted');
-  if (!isTrusted) {
-    // User is logged in but this device hasn't been verified yet
-    localStorage.setItem('lumis_verify_reason', 'new_device');
-    return '/welcome';
-  }
+  // Step 3: Authenticated — bypass device trust (returning users with passwords are trusted)
+  localStorage.setItem('lumis_device_trusted', 'true');
 
   // Step 4: Known device, active session, trusted — route into the app
   const onboarded = localStorage.getItem('lumis_onboarded');
