@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
@@ -14,11 +14,18 @@ export default function WelcomeScreen() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  useState(() => {
-    if (!localStorage.getItem('lumis_device_id')) {
-      localStorage.setItem('lumis_device_id', Math.random().toString(36).substring(2, 15));
-    }
-  });
+  useEffect(() => {
+    // If user is already authenticated (but landed here due to device check),
+    // and they aren't explicitly signing up, just trust and enter.
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session && mode === 'login') {
+        localStorage.setItem('lumis_device_trusted', 'true');
+        navigate('/home');
+      }
+    };
+    checkAuth();
+  }, [mode, navigate]);
 
   const handleLogin = async () => {
     setLoading(true);
@@ -33,6 +40,7 @@ export default function WelcomeScreen() {
     }
 
     // Returning users with correct password skip verification
+    localStorage.removeItem('lumis_pending_email');
     localStorage.setItem('lumis_device_trusted', 'true');
     navigate('/home');
   };
