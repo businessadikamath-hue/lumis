@@ -15,7 +15,7 @@ const SLIDES = [
   },
   {
     title: "Only you can read this.",
-    sub: "Your entries live on this device. Enable cloud backup anytime, optional.",
+    sub: "Your entries live on this device. Cloud backup is enabled by default so you never lose a memory.",
     icon: "🔒"
   }
 ];

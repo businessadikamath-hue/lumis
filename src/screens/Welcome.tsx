@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { sendDeviceVerificationCode } from '../utils/auth';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 
 export default function WelcomeScreen() {
@@ -33,16 +32,9 @@ export default function WelcomeScreen() {
       return;
     }
 
-    const isTrusted = localStorage.getItem('lumis_device_trusted');
-
-    if (!isTrusted) {
-      await sendDeviceVerificationCode(email);
-      localStorage.setItem('lumis_pending_email', email);
-      localStorage.setItem('lumis_verify_reason', 'new_device');
-      navigate('/verify');
-    } else {
-      navigate('/home');
-    }
+    // Returning users with correct password skip verification
+    localStorage.setItem('lumis_device_trusted', 'true');
+    navigate('/home');
   };
 
   const handleSignUp = async () => {
