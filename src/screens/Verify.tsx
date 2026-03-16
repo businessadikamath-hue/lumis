@@ -91,23 +91,22 @@ export default function VerifyScreen() {
   };
 
   return (
-    <motion.div 
+    <div 
       className="screen"
-      variants={pageVariants}
-      initial="initial" animate="animate" exit="exit"
-      style={{ padding: '32px', textAlign: 'center' }}
+      style={{ padding: '32px', textAlign: 'center', position: 'relative', zIndex: 10, color: 'white' }}
     >
       <div className="ambient-bg" />
       
-      <div style={{ marginTop: '80px', marginBottom: '40px' }}>
-        <Mail size={64} color="var(--accent-violet)" />
-        <h1 className="t-title" style={{ marginTop: '24px' }}>Check your inbox</h1>
-        <p className="t-body" style={{ color: 'var(--text-secondary)', marginTop: '8px' }}>
-          We sent a 6-digit code to <br/><strong>{email}</strong>
+      <div style={{ marginTop: '80px', marginBottom: '40px', position: 'relative', zIndex: 2 }}>
+        <Mail size={64} color="#7c6bff" style={{ margin: '0 auto' }} />
+        <h1 className="t-title" style={{ marginTop: '24px', color: 'white', fontSize: '24px' }}>Check your inbox</h1>
+        <p className="t-body" style={{ color: 'rgba(255,255,255,0.7)', marginTop: '12px' }}>
+          We sent a 6-digit code to <br/>
+          <strong style={{ color: 'white' }}>{email || 'your email'}</strong>
         </p>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '32px' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '32px', position: 'relative', zIndex: 2 }}>
         {digits.map((d, i) => (
           <input 
             key={i} id={`digit-${i}`}
@@ -116,27 +115,33 @@ export default function VerifyScreen() {
             onKeyDown={e => handleKeyDown(i, e)}
             disabled={loading}
             style={{ 
-              width: '48px', height: '60px', borderRadius: '12px', background: 'var(--glass-bg-active)', 
-              border: '2px solid var(--glass-border-hi)', color: 'white', 
+              width: '48px', height: '60px', borderRadius: '12px', background: 'rgba(255,255,255,0.1)', 
+              border: '2px solid rgba(255,255,255,0.2)', color: 'white', 
               fontSize: '28px', fontWeight: '700', textAlign: 'center', outline: 'none'
             }}
           />
         ))}
       </div>
 
-      {loading && <Loader2 className="spin" size={24} style={{ marginBottom: '24px' }} />}
-      
-      {error && (
-        <p className="t-caption" style={{ color: '#ff4757', marginBottom: '24px' }}>{error}</p>
-      )}
+      <div style={{ position: 'relative', zIndex: 2 }}>
+        {loading && <Loader2 className="spin" size={24} style={{ marginBottom: '24px', margin: '0 auto' }} />}
+        
+        {error && (
+          <p className="t-caption" style={{ color: '#ff4757', marginBottom: '24px', fontSize: '14px' }}>{error}</p>
+        )}
 
-      <button 
-        onClick={handleResend}
-        disabled={countdown > 0 || loading}
-        style={{ background: 'transparent', border: 'none', color: countdown > 0 ? 'var(--text-tertiary)' : 'var(--accent-violet)', cursor: 'pointer', fontWeight: 600 }}
-      >
-        {countdown > 0 ? `Resend code in ${countdown}s` : 'Resend code'}
-      </button>
-    </motion.div>
+        <button 
+          onClick={handleResend}
+          disabled={countdown > 0 || loading}
+          style={{ 
+            background: 'transparent', border: 'none', 
+            color: countdown > 0 ? 'rgba(255,255,255,0.3)' : '#7c6bff', 
+            cursor: 'pointer', fontWeight: 600, fontSize: '15px' 
+          }}
+        >
+          {countdown > 0 ? `Resend code in ${countdown}s` : 'Resend code'}
+        </button>
+      </div>
+    </div>
   );
 }
